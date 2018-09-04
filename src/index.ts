@@ -1,8 +1,10 @@
 import fs from 'fs'
 import readline from 'readline'
 import { promisify } from 'util'
-import google from 'googleapis'
+import google, { sheets_v4 } from 'googleapis'
 import googleAuth, { OAuth2Client } from 'google-auth-library'
+
+const sheets = new google.sheets_v4.Sheets({})
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -17,7 +19,20 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 const TOKEN_DIR = __dirname + '/..'
 const TOKEN_PATH = TOKEN_DIR + '/sheets.googleapis.com-nodejs-quickstart.json'
 
+
+// const getClient = async () => {
+//   const content = await readFileAsync(__dirname + '/../secret.json')
+//   const credentials: Secret = JSON.parse(content.toString())
+
+//   // Auth
+//   const clientSecret = credentials.installed.client_secret
+//   const clientId = credentials.installed.client_id
+//   const redirectUrl = credentials.installed.redirect_uris[0]
+//   return new OAuth2Client(clientId, clientSecret, redirectUrl)
+// }
+
 const getSheetToken = async () => {
+
   const content = await readFileAsync(__dirname + '/../secret.json')
   const credentials: Secret = JSON.parse(content.toString())
 
@@ -25,8 +40,7 @@ const getSheetToken = async () => {
   const clientSecret = credentials.installed.client_secret
   const clientId = credentials.installed.client_id
   const redirectUrl = credentials.installed.redirect_uris[0]
-  // const auth = new OAuth2Client()
-  const oauth2Client: OAuth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl)
+  const oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl)
 
   // Get new token
   const authUrl = oauth2Client.generateAuthUrl({
@@ -61,4 +75,26 @@ const getSheetToken = async () => {
   })
 }
 
-getSheetToken()
+const getSheetDate = async () => {
+  const content = await readFileAsync(__dirname + '/../secret.json')
+  const credentials: Secret = JSON.parse(content.toString())
+
+  // Auth
+  const clientSecret = credentials.installed.client_secret
+  const clientId = credentials.installed.client_id
+  const redirectUrl = credentials.installed.redirect_uris[0]
+  const oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl)
+  const token = await readFileAsync(TOKEN_PATH)
+  oauth2Client.credentials = JSON.parse(token.toString())
+
+  const apiOptions: sheets_v4.Params$Resource$Spreadsheets$Values$Get = {
+    auth: oauth2Client,
+    spreadsheetId: '1o5IQ8E5BxS4tIYd8mGiSeWgjQlaRTOh1UJ44qwpRR4A',
+    range: 'Class Data!A2:E'
+  }
+
+  const response = await sheets.spreadsheets.values.get(apiOptions, {})
+  console.log(response)
+}
+
+getSheetDate()
