@@ -1,0 +1,11 @@
+{
+  "name": "ws-slack-notifier",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "andoshin11 <shinglish11@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^2.0.0",
+    "googleapis": "^33.0.0"
+  }
+}
