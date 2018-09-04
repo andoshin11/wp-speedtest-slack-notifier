@@ -3,3 +3,4 @@ secret.json
 node_modules
 *.log
 lib
+sheets.googleapis.com-nodejs-quickstart.json
